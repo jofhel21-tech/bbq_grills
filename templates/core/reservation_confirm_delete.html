@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Cancel Reservation - BBQ Grill{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h3><i class="bi bi-exclamation-triangle"></i> Confirm Cancellation</h3>
+            </div>
+            <div class="card-body">
+                <p>Are you sure you want to cancel this reservation?</p>
+                <div class="alert alert-warning">
+                    <strong>Reservation Details:</strong><br>
+                    <strong>Type:</strong> {{ reservation.get_reservation_type_display }}<br>
+                    <strong>Date & Time:</strong> {{ reservation.scheduled_for|date:"M d, Y g:i A" }}<br>
+                    <strong>Status:</strong> {{ reservation.get_status_display }}<br>
+                    {% if reservation.total_amount %}
+                        <strong>Total Amount:</strong> ₱{{ reservation.total_amount }}<br>
+                    {% endif %}
+                    {% if reservation.contact_phone %}
+                        <strong>Contact:</strong> {{ reservation.contact_phone }}<br>
+                    {% endif %}
+                    {% if reservation.address %}
+                        <strong>Address:</strong> {{ reservation.address }}<br>
+                    {% endif %}
+                    {% if reservation.notes %}
+                        <strong>Notes:</strong> {{ reservation.notes }}
+                    {% endif %}
+                </div>
+                <p class="text-danger"><strong>This action cannot be undone.</strong></p>
+                
+                <form method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Yes, Cancel Reservation
+                    </button>
+                </form>
+                <a href="{% url 'reservation_list' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - BBQ Grill{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1>Welcome back, {{ user.username }}!</h1>
+        <p class="lead">Here's your personal dashboard</p>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Quick Actions -->
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-lightning"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'product_list' %}" class="btn btn-primary">
+                        <i class="bi bi-shop"></i> Browse Products
+                    </a>
+                    <a href="{% url 'cart_view' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-cart"></i> View Cart
+                    </a>
+                    <a href="{% url 'reservation_create' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-calendar-plus"></i> Book Reservation
+                    </a>
+                    <a href="{% url 'feedback' %}" class="btn btn-outline-info">
+                        <i class="bi bi-chat-dots"></i> Leave Feedback
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Reservations -->
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="bi bi-calendar-check"></i> Recent Reservations</h5>
+                <a href="{% url 'reservation_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if reservations %}
+                    {% for reservation in reservations %}
+                        <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                            <div>
+                                <strong>{{ reservation.get_reservation_type_display }} Order</strong><br>
+                                <small class="text-muted">{{ reservation.scheduled_for|date:"M d, Y g:i A" }}</small>
+                                {% if reservation.total_amount %}
+                                    <br><small class="text-success">₱{{ reservation.total_amount }}</small>
+                                {% endif %}
+                            </div>
+                            <span class="badge bg-{% if reservation.status == 'confirmed' %}success{% elif reservation.status == 'pending' %}warning{% elif reservation.status == 'preparing' %}info{% elif reservation.status == 'ready' %}primary{% elif reservation.status == 'completed' %}success{% else %}secondary{% endif %}">
+                                {{ reservation.get_status_display }}
+                            </span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No reservations yet. <a href="{% url 'reservation_create' %}">Make your first reservation!</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Feedback -->
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="bi bi-chat-dots"></i> Recent Feedback</h5>
+                <a href="{% url 'feedback' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Share your BBQ experience with our community!</p>
+                <a href="{% url 'feedback' %}" class="btn btn-outline-info btn-sm">
+                    <i class="bi bi-chat-dots"></i> Leave Feedback
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-graph-up"></i> Your Stats</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <div class="p-3">
+                            <h3 class="text-primary">{{ reservations|length }}</h3>
+                            <p class="mb-0">Total Reservations</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3">
+                            <h3 class="text-success">BBQ</h3>
+                            <p class="mb-0">Community</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3">
+                            <h3 class="text-info">{{ user.date_joined|timesince }}</h3>
+                            <p class="mb-0">Member Since</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3">
+                            <h3 class="text-warning">Active</h3>
+                            <p class="mb-0">Account Status</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

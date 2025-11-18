@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin - Invoice Management - BBQ Grill{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-receipt"></i> Invoice Management</h2>
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Search and Filter Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="search" class="form-label">Search Invoices</label>
+                        <input type="text" class="form-control" id="search" name="search" 
+                               value="{{ search_query }}" placeholder="Invoice #, Customer name...">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="status" class="form-label">Filter by Status</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="">All Statuses</option>
+                            {% for value, label in status_choices %}
+                                <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                        <a href="{% url 'admin_invoice_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Clear
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Invoices Table -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-ul"></i> All Invoices 
+                    <span class="badge bg-primary">{{ invoices.count }}</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if invoices %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Invoice #</th>
+                                    <th>Customer</th>
+                                    <th>Order #</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Issued Date</th>
+                                    <th>Due Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for invoice in invoices %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ invoice.invoice_number }}</strong>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <strong>{{ invoice.customer.username }}</strong>
+                                            {% if invoice.customer.first_name %}
+                                                <br><small class="text-muted">{{ invoice.customer.first_name }} {{ invoice.customer.last_name }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>#{{ invoice.order.id }}</td>
+                                    <td>
+                                        <strong>₱{{ invoice.total_amount|floatformat:2 }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{% if invoice.status == 'paid' %}success{% elif invoice.status == 'issued' %}info{% elif invoice.status == 'draft' %}warning{% else %}danger{% endif %}">
+                                            {{ invoice.get_status_display }}
+                                        </span>
+                                        {% if invoice.is_overdue %}
+                                            <br><small class="text-danger"><i class="bi bi-exclamation-triangle"></i> Overdue</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small>{{ invoice.issued_date|date:"M d, Y H:i" }}</small>
+                                    </td>
+                                    <td>
+                                        {% if invoice.due_date %}
+                                            <small>{{ invoice.due_date|date:"M d, Y" }}</small>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'admin_invoice_detail' invoice.pk %}" 
+                                               class="btn btn-sm btn-outline-primary" title="View/Edit Invoice">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a href="{% url 'invoice_detail' invoice.pk %}" 
+                                               class="btn btn-sm btn-outline-secondary" title="View Invoice">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox display-1 text-muted"></i>
+                        <h4 class="text-muted mt-3">No Invoices Found</h4>
+                        <p class="text-muted">
+                            {% if search_query or current_status %}
+                                Try adjusting your search criteria.
+                            {% else %}
+                                No invoices have been generated yet.
+                            {% endif %}
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

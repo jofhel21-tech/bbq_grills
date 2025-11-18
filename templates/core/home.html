@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - BBQ Grill{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="bg-primary text-white p-5 rounded">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-4 fw-bold">Welcome to BBQ Grill</h1>
+                    <p class="lead">Experience the finest BBQ products and services. From premium grills to expert consultation.</p>
+                    <a href="{% url 'product_list' %}" class="btn btn-light btn-lg">
+                        <i class="bi bi-shop"></i> Browse Products
+                    </a>
+                </div>
+                <div class="col-md-4 text-center">
+                    <i class="bi bi-fire display-1"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Products -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="mb-4">Featured Products</h2>
+        {% if products %}
+            <div class="row">
+                {% for product in products %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover; border-radius: 8px 8px 0 0;">
+                            {% else %}
+                                {% if 'Liempo' in product.name %}
+                                    <img src="{% static 'image/bbqporkliempo.jpg' %}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover; border-radius: 8px 8px 0 0;">
+                                {% elif 'Pork' in product.name or 'Belly' in product.name %}
+                                    <img src="{% static 'image/BBQpork.jpg' %}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover; border-radius: 8px 8px 0 0;">
+                                {% elif 'Isaw' in product.name or 'Intestine' in product.name %}
+                                    <img src="{% static 'image/isaw.jpg' %}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover; border-radius: 8px 8px 0 0;">
+                                {% elif 'Betamax' in product.name or 'Blood' in product.name %}
+                                    <img src="{% static 'image/betamax.jpg' %}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover; border-radius: 8px 8px 0 0;">
+                                {% elif 'Gizzard' in product.name or 'Balun-balunan' in product.name %}
+                                    <img src="{% static 'image/chickengizzard.jpg' %}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover; border-radius: 8px 8px 0 0;">
+                                {% elif 'Chicken' in product.name and 'Feet' in product.name or 'Chicken' in product.name and 'Adidas' in product.name or 'Feet' in product.name or 'Adidas' in product.name %}
+                                    <img src="{% static 'image/chickenfeet.jpg' %}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover; border-radius: 8px 8px 0 0;">
+                                {% elif 'Chicken' in product.name or 'Wings' in product.name or 'Thigh' in product.name %}
+                                    <img src="{% static 'image/bbqchicken.jpg' %}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover; border-radius: 8px 8px 0 0;">
+                                {% elif 'Hotdog' in product.name or 'Sausage' in product.name or 'Frankfurt' in product.name %}
+                                    <img src="{% static 'image/bbqhotdog.jpg' %}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover; border-radius: 8px 8px 0 0;">
+                                {% elif 'Maskara' in product.name or 'Face' in product.name or 'Head' in product.name %}
+                                    <img src="{% static 'image/maskara.jpg' %}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover; border-radius: 8px 8px 0 0;">
+                                {% elif 'Beef' in product.name or 'Steak' in product.name %}
+                                    <img src="{% static 'image/BBQpork.jpg' %}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover; border-radius: 8px 8px 0 0;">
+                                {% elif 'Fish' in product.name or 'Bangus' in product.name or 'Tilapia' in product.name %}
+                                    <img src="{% static 'image/bbqchicken.jpg' %}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover; border-radius: 8px 8px 0 0;">
+                                {% else %}
+                                    <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%); border-radius: 8px 8px 0 0;">
+                                        <div class="text-center text-white">
+                                            <i class="bi bi-fire" style="font-size: 3rem; opacity: 0.8;"></i>
+                                            <p class="mt-2 mb-0 fw-bold">BBQ Special</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text flex-grow-1">{{ product.description|truncatewords:15 }}</p>
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="text-primary mb-0">₱{{ product.price }}</h5>
+                                        {% if user.is_authenticated %}
+                                            <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary btn-sm">
+                                                <i class="bi bi-cart-plus"></i> Add to Cart
+                                            </a>
+                                        {% else %}
+                                            <a href="/accounts/login/" class="btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-box-arrow-in-right"></i> Login
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-center">
+                <a href="{% url 'product_list' %}" class="btn btn-outline-primary">View All Products</a>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> No products available at the moment.
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Recent Orders -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="mb-4">Recent Orders</h2>
+        {% if recent_orders %}
+            <div class="row">
+                {% for order in recent_orders %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Order #{{ order.id }}</h5>
+                                <p class="card-text">
+                                    <strong>Customer:</strong> {{ order.customer.username }}<br>
+                                    <strong>Total:</strong> ₱{{ order.total_amount }}<br>
+                                    <strong>Status:</strong> 
+                                    <span class="badge bg-{% if order.status == 'completed' %}success{% elif order.status == 'processing' %}warning{% elif order.status == 'pending' %}info{% else %}secondary{% endif %}">
+                                        {{ order.get_status_display }}
+                                    </span>
+                                </p>
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar"></i> {{ order.created_at|date:"M d, Y g:i A" }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-center">
+                <a href="{% url 'order_list' %}" class="btn btn-outline-primary">View All Orders</a>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> No orders available at the moment.
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="row">
+    <div class="col-12">
+        <div class="bg-light p-4 rounded text-center">
+            <h3>Ready to Get Started?</h3>
+            <p class="mb-3">Join our community and place your first BBQ order today!</p>
+            {% if not user.is_authenticated %}
+                <a href="{% url 'register' %}" class="btn btn-primary me-2">
+                    <i class="bi bi-person-plus"></i> Sign Up
+                </a>
+                <a href="/accounts/login/" class="btn btn-outline-primary">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </a>
+            {% else %}
+                <a href="{% url 'reservation_create' %}" class="btn btn-primary">
+                    <i class="bi bi-cart-plus"></i> Book Order
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

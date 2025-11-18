@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - BBQ Grill{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1><i class="bi bi-pencil"></i> {{ title }}</h1>
+        <p class="lead">Update stock quantity and availability for this product</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'admin_stock_management' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Stock Management
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-boxes"></i> Stock Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.stock_quantity.id_for_label }}" class="form-label">
+                                {{ form.stock_quantity.label }}
+                            </label>
+                            {{ form.stock_quantity }}
+                            {% if form.stock_quantity.help_text %}
+                                <div class="form-text">{{ form.stock_quantity.help_text }}</div>
+                            {% endif %}
+                            {% if form.stock_quantity.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.stock_quantity.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Current Stock Status</label>
+                            <div class="p-2 border rounded">
+                                {% if product.stock_quantity == 0 %}
+                                    <span class="badge bg-danger fs-6">Out of Stock</span>
+                                {% elif product.stock_quantity <= 5 %}
+                                    <span class="badge bg-warning fs-6">Low Stock</span>
+                                {% else %}
+                                    <span class="badge bg-success fs-6">In Stock</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                {{ form.is_active }}
+                                <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                    {{ form.is_active.label }}
+                                </label>
+                            </div>
+                            <div class="form-text">
+                                Uncheck to temporarily disable this product from being sold
+                            </div>
+                            {% if form.is_active.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.is_active.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Current Availability</label>
+                            <div class="p-2 border rounded">
+                                {% if product.is_active %}
+                                    <span class="badge bg-success fs-6">Active</span>
+                                {% else %}
+                                    <span class="badge bg-secondary fs-6">Inactive</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Update Stock
+                        </button>
+                        <a href="{% url 'admin_stock_management' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-info-circle"></i> Product Details
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" 
+                         class="img-fluid rounded mb-3" style="max-height: 200px; width: 100%; object-fit: cover;">
+                {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center rounded mb-3" 
+                         style="height: 200px;">
+                        <i class="bi bi-image fs-1 text-muted"></i>
+                    </div>
+                {% endif %}
+                
+                <h5>{{ product.name }}</h5>
+                <p class="text-muted">{{ product.description|default:"No description available" }}</p>
+                
+                <hr>
+                
+                <div class="row text-center">
+                    <div class="col-6">
+                        <strong>Price</strong>
+                        <div class="fs-5 text-primary">₱{{ product.price }}</div>
+                    </div>
+                    <div class="col-6">
+                        <strong>Current Stock</strong>
+                        <div class="fs-5 text-info">{{ product.stock_quantity }}</div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <small class="text-muted">
+                    <strong>Created:</strong> {{ product.created_at|date:"M d, Y" }}<br>
+                    <strong>Updated:</strong> {{ product.updated_at|date:"M d, Y g:i A" }}
+                </small>
+            </div>
+        </div>
+        
+        <!-- Quick Stock Actions -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightning"></i> Quick Actions
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-outline-success btn-sm" onclick="setStock(10)">
+                        Set to 10 units
+                    </button>
+                    <button type="button" class="btn btn-outline-success btn-sm" onclick="setStock(25)">
+                        Set to 25 units
+                    </button>
+                    <button type="button" class="btn btn-outline-success btn-sm" onclick="setStock(50)">
+                        Set to 50 units
+                    </button>
+                    <button type="button" class="btn btn-outline-warning btn-sm" onclick="setStock(0)">
+                        Mark as Out of Stock
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function setStock(quantity) {
+    document.getElementById('{{ form.stock_quantity.id_for_label }}').value = quantity;
+}
+</script>
+{% endblock %}

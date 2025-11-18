@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Generate Invoice - BBQ Grill{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h3 class="text-center mb-0"><i class="bi bi-receipt"></i> {{ title }}</h3>
+            </div>
+            <div class="card-body p-4">
+                <!-- Order Summary -->
+                <div class="alert alert-info mb-4">
+                    <h6 class="mb-3"><i class="bi bi-bag-check"></i> Order Summary</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Order #:</strong> #{{ order.id }}</p>
+                            <p class="mb-1"><strong>Customer:</strong> {{ order.customer.get_full_name|default:order.customer.username }}</p>
+                            <p class="mb-0"><strong>Order Date:</strong> {{ order.created_at|date:"F d, Y" }}</p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p class="mb-1"><strong>Items:</strong> {{ order.items.count }}</p>
+                            <p class="mb-0"><strong>Total:</strong> ₱{{ order.total_amount|floatformat:2 }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Items -->
+                <div class="mb-4">
+                    <h6 class="mb-3">Order Items:</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Product</th>
+                                    <th class="text-center">Qty</th>
+                                    <th class="text-end">Price</th>
+                                    <th class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.items.all %}
+                                    <tr>
+                                        <td>{{ item.product.name }}</td>
+                                        <td class="text-center">{{ item.quantity }}</td>
+                                        <td class="text-end">₱{{ item.price|floatformat:2 }}</td>
+                                        <td class="text-end">₱{{ item.total_price|floatformat:2 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Invoice Form -->
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Error:</strong>
+                            {% for error in form.non_field_errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endif %}
+
+                    <h6 class="mb-3">Invoice Details:</h6>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.tax_amount.id_for_label }}" class="form-label">
+                                <i class="bi bi-percent"></i> Tax/VAT Amount
+                            </label>
+                            {{ form.tax_amount }}
+                            {% if form.tax_amount.errors %}
+                                <div class="invalid-feedback d-block">{{ form.tax_amount.errors.0 }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">Leave as 0 if no tax applies</small>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.discount_amount.id_for_label }}" class="form-label">
+                                <i class="bi bi-tag"></i> Discount Amount
+                            </label>
+                            {{ form.discount_amount }}
+                            {% if form.discount_amount.errors %}
+                                <div class="invalid-feedback d-block">{{ form.discount_amount.errors.0 }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">Leave as 0 if no discount</small>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.due_date.id_for_label }}" class="form-label">
+                                <i class="bi bi-calendar"></i> Due Date
+                            </label>
+                            {{ form.due_date }}
+                            {% if form.due_date.errors %}
+                                <div class="invalid-feedback d-block">{{ form.due_date.errors.0 }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">Optional - leave blank for immediate payment</small>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.payment_terms.id_for_label }}" class="form-label">
+                                <i class="bi bi-receipt"></i> Payment Terms
+                            </label>
+                            {{ form.payment_terms }}
+                            {% if form.payment_terms.errors %}
+                                <div class="invalid-feedback d-block">{{ form.payment_terms.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.notes.id_for_label }}" class="form-label">
+                            <i class="bi bi-chat-dots"></i> Additional Notes
+                        </label>
+                        {{ form.notes }}
+                        {% if form.notes.errors %}
+                            <div class="invalid-feedback d-block">{{ form.notes.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Amount Preview -->
+                    <div class="alert alert-light border mb-4">
+                        <h6 class="mb-3">Amount Preview:</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-1">Subtotal: <strong>₱{{ order.total_amount|floatformat:2 }}</strong></p>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <p class="mb-1">Tax: <strong id="tax-preview">₱0.00</strong></p>
+                                <p class="mb-1">Discount: <strong id="discount-preview">-₱0.00</strong></p>
+                                <p class="mb-0 border-top pt-2">Total: <strong id="total-preview" style="color: var(--bbq-gold);">₱{{ order.total_amount|floatformat:2 }}</strong></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle"></i> Generate Invoice
+                        </button>
+                        <a href="{% url 'admin_order_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Update preview amounts
+    document.addEventListener('DOMContentLoaded', function() {
+        const subtotal = parseFloat('{{ order.total_amount }}');
+        const taxInput = document.querySelector('input[name="tax_amount"]');
+        const discountInput = document.querySelector('input[name="discount_amount"]');
+        
+        function updatePreview() {
+            const tax = parseFloat(taxInput.value) || 0;
+            const discount = parseFloat(discountInput.value) || 0;
+            const total = subtotal + tax - discount;
+            
+            document.getElementById('tax-preview').textContent = '₱' + tax.toFixed(2);
+            document.getElementById('discount-preview').textContent = '-₱' + discount.toFixed(2);
+            document.getElementById('total-preview').textContent = '₱' + total.toFixed(2);
+        }
+        
+        taxInput.addEventListener('input', updatePreview);
+        discountInput.addEventListener('input', updatePreview);
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout - BBQ Grill{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1><i class="bi bi-credit-card"></i> Checkout</h1>
+        <p class="lead">Complete your order and select payment method</p>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Order Summary -->
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="bi bi-list-ul"></i> Order Summary</h5>
+            </div>
+            <div class="card-body">
+                {% for item in cart_items %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="flex-grow-1">
+                            <strong>{{ item.product.name }}</strong><br>
+                            <small class="text-muted">Qty: {{ item.quantity }} × ₱{{ item.product.price }}</small>
+                        </div>
+                        <div class="text-end">
+                            <strong>₱{{ item.total_price }}</strong>
+                        </div>
+                    </div>
+                    {% if not forloop.last %}<hr class="my-2">{% endif %}
+                {% endfor %}
+                
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <strong>Total Items:</strong>
+                    <strong>{{ total_items }}</strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <strong>Total Amount:</strong>
+                    <strong class="text-primary">₱{{ total_amount }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Form -->
+    <div class="col-md-8">
+        <form method="post" id="checkoutForm">
+            {% csrf_token %}
+            
+            <!-- Payment Method Selection -->
+            <div class="card mb-4" style="border: 2px solid var(--bbq-gold); background: linear-gradient(135deg, rgba(255, 140, 0, 0.05) 0%, rgba(255, 215, 0, 0.05) 100%);">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--bbq-charcoal) 0%, var(--bbq-smoke) 100%); color: white;">
+                    <h5 class="mb-0"><i class="bi bi-credit-card"></i> Payment Method</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for value, label in form.payment_method.field.choices %}
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check payment-option">
+                                    <input class="form-check-input" type="radio" name="payment_method" 
+                                           id="payment_{{ value }}" value="{{ value }}" 
+                                           {% if form.payment_method.value == value or value == 'cash' and not form.payment_method.value %}checked{% endif %}>
+                                    <label class="form-check-label w-100" for="payment_{{ value }}">
+                                        <div class="payment-card p-3 border rounded">
+                                            {% if value == 'cash' %}
+                                                <i class="bi bi-cash-coin text-success fs-4"></i>
+                                            {% elif value == 'gcash' %}
+                                                <i class="bi bi-phone text-primary fs-4"></i>
+                                            {% elif value == 'paymaya' %}
+                                                <i class="bi bi-phone text-info fs-4"></i>
+                                            {% elif value == 'bank_transfer' %}
+                                                <i class="bi bi-bank text-warning fs-4"></i>
+                                            {% else %}
+                                                <i class="bi bi-credit-card text-secondary fs-4"></i>
+                                            {% endif %}
+                                            <div class="mt-2">
+                                                <strong>{{ label }}</strong>
+                                                <br>
+                                                <small class="text-muted">
+                                                    {% if value == 'cash' %}
+                                                        Pay when your order is delivered
+                                                    {% elif value == 'gcash' %}
+                                                        Pay via GCash mobile wallet
+                                                    {% elif value == 'paymaya' %}
+                                                        Pay via PayMaya digital wallet
+                                                    {% elif value == 'bank_transfer' %}
+                                                        Transfer to our bank account
+                                                    {% else %}
+                                                        Pay with your {{ label|lower }}
+                                                    {% endif %}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delivery Information -->
+            <div class="card mb-4" style="border: 2px solid var(--bbq-gold); background: linear-gradient(135deg, rgba(255, 140, 0, 0.05) 0%, rgba(255, 215, 0, 0.05) 100%);">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--bbq-charcoal) 0%, var(--bbq-smoke) 100%); color: white;">
+                    <h5 class="mb-0"><i class="bi bi-geo-alt-fill"></i> Delivery Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="{{ form.delivery_address.id_for_label }}" class="form-label">{{ form.delivery_address.label }}</label>
+                        {{ form.delivery_address }}
+                        {% if form.delivery_address.errors %}
+                            <div class="text-danger">{{ form.delivery_address.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.delivery_barangay.id_for_label }}" class="form-label">{{ form.delivery_barangay.label }}</label>
+                        {{ form.delivery_barangay }}
+                        {% if form.delivery_barangay.errors %}
+                            <div class="text-danger">{{ form.delivery_barangay.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Hidden fields for coordinates -->
+                    {{ form.delivery_latitude }}
+                    {{ form.delivery_longitude }}
+
+                    <div class="alert alert-info mb-3">
+                        <i class="bi bi-info-circle"></i> <strong>Click on the map below to select your delivery location</strong>
+                    </div>
+
+                    <!-- Map Section -->
+                    <div class="card mb-3" style="border: 1px solid var(--bbq-gold);">
+                        <div class="card-header" style="background: linear-gradient(135deg, var(--bbq-charcoal) 0%, var(--bbq-smoke) 100%); color: white;">
+                            <h6 class="mb-0"><i class="bi bi-map"></i> Select Delivery Location</h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <div id="checkoutMap" style="width: 100%; height: 300px; border-radius: 0 0 8px 8px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Notes -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-chat-text"></i> Order Notes (Optional)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="{{ form.order_notes.id_for_label }}" class="form-label">{{ form.order_notes.label }}</label>
+                        {{ form.order_notes }}
+                        {% if form.order_notes.errors %}
+                            <div class="text-danger">{{ form.order_notes.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'cart_view' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Cart
+                </a>
+                <button type="submit" class="btn btn-success btn-lg">
+                    <i class="bi bi-check-circle"></i> Place Order - ₱{{ total_amount }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+
+<!-- Leaflet JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+<style>
+.payment-option .payment-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.payment-option input[type="radio"]:checked + label .payment-card {
+    border-color: var(--bbq-gold) !important;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 140, 0, 0.1) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.payment-option .payment-card:hover {
+    border-color: var(--bbq-ember) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Naval, Biliran coordinates
+    const navalCoords = [11.5667, 124.5667];
+    
+    // Get form fields
+    const latField = document.getElementById('id_delivery_latitude');
+    const lngField = document.getElementById('id_delivery_longitude');
+    
+    let selectedLat = latField.value ? parseFloat(latField.value) : navalCoords[0];
+    let selectedLng = lngField.value ? parseFloat(lngField.value) : navalCoords[1];
+    
+    // Initialize map
+    const map = L.map('checkoutMap').setView([selectedLat, selectedLng], 15);
+    
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+    }).addTo(map);
+    
+    // Create marker for selected location
+    let marker = L.marker([selectedLat, selectedLng], {
+        icon: L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        }),
+        draggable: true
+    }).addTo(map);
+    
+    marker.bindPopup('Your Delivery Location<br>Drag to adjust or click map').openPopup();
+    
+    // Add service area circle
+    L.circle(navalCoords, {
+        color: '#D4AF37',
+        fillColor: '#D4AF37',
+        fillOpacity: 0.1,
+        radius: 5000,
+        weight: 2,
+        dashArray: '5, 5'
+    }).addTo(map);
+    
+    // Update coordinates when marker is dragged
+    marker.on('dragend', function() {
+        const pos = marker.getLatLng();
+        latField.value = pos.lat.toFixed(6);
+        lngField.value = pos.lng.toFixed(6);
+    });
+    
+    // Update coordinates when map is clicked
+    map.on('click', function(e) {
+        const lat = e.latlng.lat;
+        const lng = e.latlng.lng;
+        
+        // Update marker position
+        marker.setLatLng([lat, lng]);
+        marker.openPopup();
+        
+        // Update hidden fields
+        latField.value = lat.toFixed(6);
+        lngField.value = lng.toFixed(6);
+    });
+
+    // Payment method selection animation
+    document.querySelectorAll('input[name="payment_method"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            // Remove active class from all cards
+            document.querySelectorAll('.payment-card').forEach(function(card) {
+                card.classList.remove('active');
+            });
+            
+            // Add active class to selected card
+            if (this.checked) {
+                this.parentElement.querySelector('.payment-card').classList.add('active');
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}

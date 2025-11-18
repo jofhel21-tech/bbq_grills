@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ title }} - BBQ Grill{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi bi-credit-card"></i> {{ title }}</h4>
+            </div>
+            <div class="card-body">
+                {% if order %}
+                    <!-- Order Information -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Order Details</h6>
+                            <p><strong>Order #:</strong> {{ order.id }}</p>
+                            <p><strong>Customer:</strong> {{ order.customer.username }}</p>
+                            <p><strong>Total:</strong> ₱{{ order.total_amount }}</p>
+                            <p><strong>Status:</strong> 
+                                <span class="badge bg-{% if order.status == 'pending' %}warning{% elif order.status == 'processing' %}info{% elif order.status == 'completed' %}success{% else %}danger{% endif %}">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Order Items</h6>
+                            {% for item in order.items.all %}
+                                <p class="mb-1">{{ item.quantity }}x {{ item.product.name }} - ₱{{ item.total_price }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <hr>
+                {% endif %}
+
+                {% if payment %}
+                    <!-- Existing Payment Information -->
+                    <div class="alert alert-info">
+                        <h6><i class="bi bi-info-circle"></i> Current Payment Information</h6>
+                        <p><strong>Payment ID:</strong> #{{ payment.id }}</p>
+                        <p><strong>Current Status:</strong> {{ payment.get_status_display }}</p>
+                        <p><strong>Amount:</strong> ₱{{ payment.amount }}</p>
+                        <p><strong>Method:</strong> {{ payment.get_payment_method_display }}</p>
+                        {% if payment.transaction_id %}
+                            <p><strong>Transaction ID:</strong> {{ payment.transaction_id }}</p>
+                        {% endif %}
+                        {% if payment.processed_by %}
+                            <p><strong>Processed by:</strong> {{ payment.processed_by.username }}</p>
+                        {% endif %}
+                        <p><strong>Created:</strong> {{ payment.created_at|date:"M d, Y H:i" }}</p>
+                    </div>
+                {% endif %}
+
+                <!-- Payment Form -->
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.amount.id_for_label }}" class="form-label">{{ form.amount.label }}</label>
+                                {{ form.amount }}
+                                {% if form.amount.errors %}
+                                    <div class="text-danger">{{ form.amount.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.payment_method.id_for_label }}" class="form-label">{{ form.payment_method.label }}</label>
+                                {{ form.payment_method }}
+                                {% if form.payment_method.errors %}
+                                    <div class="text-danger">{{ form.payment_method.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.status.id_for_label }}" class="form-label">{{ form.status.label }}</label>
+                                {{ form.status }}
+                                {% if form.status.errors %}
+                                    <div class="text-danger">{{ form.status.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.payment_date.id_for_label }}" class="form-label">{{ form.payment_date.label }}</label>
+                                {{ form.payment_date }}
+                                {% if form.payment_date.errors %}
+                                    <div class="text-danger">{{ form.payment_date.errors }}</div>
+                                {% endif %}
+                                <div class="form-text">{{ form.payment_date.help_text }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.transaction_id.id_for_label }}" class="form-label">{{ form.transaction_id.label }}</label>
+                                {{ form.transaction_id }}
+                                {% if form.transaction_id.errors %}
+                                    <div class="text-danger">{{ form.transaction_id.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.reference_number.id_for_label }}" class="form-label">{{ form.reference_number.label }}</label>
+                                {{ form.reference_number }}
+                                {% if form.reference_number.errors %}
+                                    <div class="text-danger">{{ form.reference_number.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.notes.id_for_label }}" class="form-label">{{ form.notes.label }}</label>
+                        {{ form.notes }}
+                        {% if form.notes.errors %}
+                            <div class="text-danger">{{ form.notes.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'admin_payment_list' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Payments
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> 
+                            {% if payment %}Update Payment{% else %}Create Payment{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-set payment date to now when status is changed to completed
+document.getElementById('id_status').addEventListener('change', function() {
+    const paymentDateField = document.getElementById('id_payment_date');
+    if (this.value === 'completed' && !paymentDateField.value) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        
+        paymentDateField.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+});
+</script>
+{% endblock %}

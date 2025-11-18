@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}Shopping Cart - BBQ Grill{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-cart"></i> Shopping Cart</h1>
+            <a href="{% url 'product_list' %}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left"></i> Continue Shopping
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        {% if cart_items %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart_items %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if item.product.image %}
+                                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" 
+                                                 class="me-3" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                                        {% else %}
+                                            {% load static %}
+                                            <div class="me-3 d-flex align-items-center justify-content-center" 
+                                                 style="width: 60px; height: 60px; background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%); border-radius: 8px;">
+                                                <i class="bi bi-fire text-white"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            <h6 class="mb-0">{{ item.product.name }}</h6>
+                                            <small class="text-muted">{{ item.product.description|truncatewords:10 }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>₱{{ item.product.price }}</td>
+                                <td>
+                                    <form method="post" action="{% url 'update_cart_item' item.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <div class="input-group" style="width: 120px;">
+                                            <input type="number" name="quantity" value="{{ item.quantity }}" 
+                                                   min="1" max="99" class="form-control form-control-sm">
+                                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-check"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </td>
+                                <td><strong>₱{{ item.total_price }}</strong></td>
+                                <td>
+                                    <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-outline-danger btn-sm"
+                                       onclick="return confirm('Remove {{ item.product.name }} from cart?')">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Cart Summary -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Cart Summary</h5>
+                            <div class="d-flex justify-content-between">
+                                <span>Items ({{ cart.total_items }}):</span>
+                                <span>₱{{ cart.total_price }}</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <strong>Total:</strong>
+                                <strong>₱{{ cart.total_price }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5>Ready to Order?</h5>
+                            <p class="text-muted">Review your items and proceed to checkout</p>
+                            <a href="{% url 'checkout' %}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-credit-card"></i> Checkout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center">
+                <i class="bi bi-cart-x" style="font-size: 3rem;"></i>
+                <h4>Your Cart is Empty</h4>
+                <p>Add some delicious BBQ products to get started!</p>
+                <a href="{% url 'product_list' %}" class="btn btn-primary">
+                    <i class="bi bi-shop"></i> Browse Products
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

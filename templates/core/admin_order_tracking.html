@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ title }} - BBQ Grill{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi bi-geo-alt"></i> {{ title }}</h4>
+            </div>
+            <div class="card-body">
+                <!-- Order Information -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6>Order Details</h6>
+                        <p><strong>Order #:</strong> {{ order.id }}</p>
+                        <p><strong>Customer:</strong> {{ order.customer.username }}</p>
+                        <p><strong>Total:</strong> ₱{{ order.total_amount }}</p>
+                        <p><strong>Status:</strong> 
+                            <span class="badge bg-{% if order.status == 'pending' %}warning{% elif order.status == 'processing' %}info{% elif order.status == 'completed' %}success{% else %}danger{% endif %}">
+                                {{ order.get_status_display }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Delivery Information</h6>
+                        {% if order.delivery_address %}
+                            <p><strong>Address:</strong><br>{{ order.delivery_address }}</p>
+                            <p><strong>Barangay:</strong> {{ order.delivery_barangay }}</p>
+                        {% else %}
+                            <p class="text-muted">No delivery address provided</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Tracking Update Form -->
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tracking_status" class="form-label">Tracking Status</label>
+                                <select class="form-select" id="tracking_status" name="tracking_status" required>
+                                    {% for value, label in tracking_status_choices %}
+                                        <option value="{{ value }}" {% if tracking.status == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="estimated_delivery" class="form-label">Estimated Delivery</label>
+                                <input type="datetime-local" class="form-control" id="estimated_delivery" 
+                                       name="estimated_delivery" 
+                                       value="{% if tracking.estimated_delivery %}{{ tracking.estimated_delivery|date:'Y-m-d\TH:i' }}{% endif %}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="latitude" class="form-label">Latitude</label>
+                                <input type="number" class="form-control" id="latitude" name="latitude" 
+                                       step="0.0001" placeholder="e.g., 14.5994"
+                                       value="{% if tracking.latitude %}{{ tracking.latitude }}{% endif %}">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="longitude" class="form-label">Longitude</label>
+                                <input type="number" class="form-control" id="longitude" name="longitude" 
+                                       step="0.0001" placeholder="e.g., 120.9842"
+                                       value="{% if tracking.longitude %}{{ tracking.longitude }}{% endif %}">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="location_name" class="form-label">Location Name</label>
+                                <input type="text" class="form-control" id="location_name" name="location_name" 
+                                       placeholder="e.g., Downtown Branch"
+                                       value="{{ tracking.location_name }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Current Tracking Info -->
+                    {% if tracking.latitude and tracking.longitude %}
+                        <div class="alert alert-info">
+                            <h6><i class="bi bi-info-circle"></i> Current Tracking Information</h6>
+                            <p><strong>Status:</strong> {{ tracking.get_status_display }}</p>
+                            <p><strong>Location:</strong> {{ tracking.location_name|default:"Not specified" }}</p>
+                            <p><strong>Coordinates:</strong> {{ tracking.latitude }}, {{ tracking.longitude }}</p>
+                            {% if tracking.estimated_delivery %}
+                                <p><strong>Estimated Delivery:</strong> {{ tracking.estimated_delivery|date:"M d, Y H:i" }}</p>
+                            {% endif %}
+                            <p><strong>Last Updated:</strong> {{ tracking.updated_at|date:"M d, Y H:i" }}</p>
+                        </div>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'admin_order_list' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Orders
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Update Tracking
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="bi bi-list"></i> Order Items</h5>
+            </div>
+            <div class="card-body">
+                {% if order.items.all %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.items.all %}
+                                <tr>
+                                    <td>{{ item.product.name }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>₱{{ item.price }}</td>
+                                    <td>₱{{ item.total_price }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-active">
+                                    <th colspan="3">Total</th>
+                                    <th>₱{{ order.total_amount }}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">No items in this order.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-fill location name based on coordinates (optional enhancement)
+document.getElementById('latitude').addEventListener('blur', updateLocationSuggestion);
+document.getElementById('longitude').addEventListener('blur', updateLocationSuggestion);
+
+function updateLocationSuggestion() {
+    const lat = document.getElementById('latitude').value;
+    const lng = document.getElementById('longitude').value;
+    const locationField = document.getElementById('location_name');
+    
+    if (lat && lng && !locationField.value) {
+        // You could integrate with a geocoding service here
+        // For now, just provide a helpful placeholder
+        locationField.placeholder = `Location at ${lat}, ${lng}`;
+    }
+}
+</script>
+{% endblock %}

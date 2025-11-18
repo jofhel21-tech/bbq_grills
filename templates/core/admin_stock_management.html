@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+
+{% block title %}Stock Management - BBQ Grill{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1><i class="bi bi-boxes"></i> Stock Management</h1>
+        <p class="lead">Manage product availability and stock levels</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- Stock Summary Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Total Products</h5>
+                        <h3>{{ total_products }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-shop fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Out of Stock</h5>
+                        <h3>{{ out_of_stock_count }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-exclamation-triangle fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Low Stock</h5>
+                        <h3>{{ low_stock_count }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-exclamation-circle fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-secondary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Inactive</h5>
+                        <h3>{{ inactive_count }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-pause-circle fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Buttons -->
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="btn-group" role="group">
+            <a href="?stock_filter=all" class="btn {% if stock_filter == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                All Products
+            </a>
+            <a href="?stock_filter=out_of_stock" class="btn {% if stock_filter == 'out_of_stock' %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                Out of Stock
+            </a>
+            <a href="?stock_filter=low_stock" class="btn {% if stock_filter == 'low_stock' %}btn-warning{% else %}btn-outline-warning{% endif %}">
+                Low Stock
+            </a>
+            <a href="?stock_filter=in_stock" class="btn {% if stock_filter == 'in_stock' %}btn-success{% else %}btn-outline-success{% endif %}">
+                In Stock
+            </a>
+            <a href="?stock_filter=inactive" class="btn {% if stock_filter == 'inactive' %}btn-secondary{% else %}btn-outline-secondary{% endif %}">
+                Inactive
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Products Table -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="bi bi-list"></i> Products
+            {% if stock_filter != 'all' %}
+                - {% if stock_filter == 'out_of_stock' %}Out of Stock{% elif stock_filter == 'low_stock' %}Low Stock{% elif stock_filter == 'in_stock' %}In Stock{% elif stock_filter == 'inactive' %}Inactive{% else %}{{ stock_filter|title }}{% endif %}
+            {% endif %}
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if products %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Stock Quantity</th>
+                            <th>Status</th>
+                            <th>Availability</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if product.image %}
+                                            <img src="{{ product.image.url }}" alt="{{ product.name }}" 
+                                                 class="me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                                        {% else %}
+                                            <div class="me-2 bg-secondary d-flex align-items-center justify-content-center" 
+                                                 style="width: 40px; height: 40px; border-radius: 4px;">
+                                                <i class="bi bi-image text-white"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            <strong>{{ product.name }}</strong>
+                                            {% if product.description %}
+                                                <br><small class="text-muted">{{ product.description|truncatechars:50 }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>₱{{ product.price }}</td>
+                                <td>
+                                    <span class="fw-bold">{{ product.stock_quantity }}</span>
+                                </td>
+                                <td>
+                                    {% if product.stock_quantity == 0 %}
+                                        <span class="badge bg-danger">Out of Stock</span>
+                                    {% elif product.stock_quantity <= 5 %}
+                                        <span class="badge bg-warning">Low Stock</span>
+                                    {% else %}
+                                        <span class="badge bg-success">In Stock</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if product.is_active %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'admin_update_stock' product.id %}" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-pencil"></i> Update Stock
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-4">
+                <i class="bi bi-inbox fs-1 text-muted"></i>
+                <h4 class="text-muted">No Products Found</h4>
+                <p class="text-muted">No products match the selected filter.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

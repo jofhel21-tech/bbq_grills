@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Admin - Order Management - BBQ Grill{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-shield-check"></i> Admin Order Management</h2>
+            <div class="d-flex gap-2">
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Search and Filter Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="search" class="form-label">Search Orders</label>
+                        <input type="text" class="form-control" id="search" name="search" 
+                               value="{{ search_query }}" placeholder="Order ID, Customer name...">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="status" class="form-label">Filter by Status</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="">All Statuses</option>
+                            {% for value, label in status_choices %}
+                                <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                        <a href="{% url 'admin_order_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Clear
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-ul"></i> All Orders 
+                    <span class="badge bg-primary">{{ orders.count }}</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if orders %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Customer</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Payment</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                <tr>
+                                    <td>
+                                        <strong>#{{ order.id }}</strong>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <strong>{{ order.customer.username }}</strong>
+                                            {% if order.customer.first_name %}
+                                                <br><small class="text-muted">{{ order.customer.first_name }} {{ order.customer.last_name }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <small>
+                                            {% for item in order.items.all %}
+                                                {{ item.quantity }}x {{ item.product.name }}<br>
+                                            {% endfor %}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <strong>₱{{ order.total_amount }}</strong>
+                                    </td>
+                                    <td>
+                                        {% if order.status == 'pending' %}
+                                            <span class="badge bg-warning">{{ order.get_status_display }}</span>
+                                        {% elif order.status == 'processing' %}
+                                            <span class="badge bg-info">{{ order.get_status_display }}</span>
+                                        {% elif order.status == 'out_for_delivery' %}
+                                            <span class="badge bg-primary">{{ order.get_status_display }}</span>
+                                        {% elif order.status == 'completed' %}
+                                            <span class="badge bg-success">{{ order.get_status_display }}</span>
+                                        {% elif order.status == 'cancelled' %}
+                                            <span class="badge bg-danger">{{ order.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if order.payments.exists %}
+                                            {% with payment=order.payments.first %}
+                                                <span class="badge bg-{% if payment.status == 'completed' %}success{% elif payment.status == 'processing' %}info{% elif payment.status == 'pending' %}warning{% elif payment.status == 'failed' %}danger{% elif payment.status == 'refunded' %}dark{% else %}secondary{% endif %}">
+                                                    {{ payment.get_status_display }}
+                                                </span>
+                                            {% endwith %}
+                                        {% else %}
+                                            <span class="badge bg-secondary">No Payment</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small>{{ order.created_at|date:"M d, Y H:i" }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            {% if order.status in 'completed,out_for_delivery' and order.payments.exists and order.payments.first.status == 'completed' %}
+                                                <!-- Order is locked: only show track and invoice buttons -->
+                                                {% if not order.invoice %}
+                                                    <a href="{% url 'admin_generate_invoice' order.pk %}" 
+                                                       class="btn btn-sm btn-outline-success" title="Generate Invoice">
+                                                        <i class="bi bi-receipt"></i>
+                                                    </a>
+                                                {% else %}
+                                                    <a href="{% url 'admin_invoice_detail' order.invoice.pk %}" 
+                                                       class="btn btn-sm btn-outline-success" title="View Invoice">
+                                                        <i class="bi bi-receipt"></i>
+                                                    </a>
+                                                {% endif %}
+                                                <a href="{% url 'order_tracking' order.pk %}" 
+                                                   class="btn btn-sm btn-outline-secondary" title="View Tracking">
+                                                    <i class="bi bi-eye"></i> Track
+                                                </a>
+                                            {% else %}
+                                                <!-- Order is editable: show all actions -->
+                                                <a href="{% url 'admin_order_update' order.pk %}" 
+                                                   class="btn btn-sm btn-outline-primary" title="Edit Order">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a href="{% url 'admin_payment_create' order.pk %}" 
+                                                   class="btn btn-sm btn-outline-success" title="Create Payment">
+                                                    <i class="bi bi-credit-card"></i>
+                                                </a>
+                                                <a href="{% url 'admin_order_tracking_update' order.pk %}" 
+                                                   class="btn btn-sm btn-outline-info" title="Update Tracking">
+                                                    <i class="bi bi-geo-alt"></i>
+                                                </a>
+                                                <a href="{% url 'order_tracking' order.pk %}" 
+                                                   class="btn btn-sm btn-outline-secondary" title="View Tracking">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox display-1 text-muted"></i>
+                        <h4 class="text-muted mt-3">No Orders Found</h4>
+                        <p class="text-muted">
+                            {% if search_query or current_status %}
+                                Try adjusting your search criteria.
+                            {% else %}
+                                No orders have been placed yet.
+                            {% endif %}
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <h5>Pending Orders</h5>
+                        <h3>{{ orders|length }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h5>Processing</h5>
+                        <h3>{{ orders|length }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5>Completed</h5>
+                        <h3>{{ orders|length }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h5>Cancelled</h5>
+                        <h3>{{ orders|length }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

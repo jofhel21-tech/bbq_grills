@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order Tracking Guide - BBQ Grill Admin{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 style="color: var(--bbq-gold); margin-bottom: 30px;">
+                <i class="bi bi-geo-alt"></i> Order Tracking Management Guide
+            </h1>
+        </div>
+    </div>
+
+    <!-- Quick Start -->
+    <div class="row mb-5">
+        <div class="col-lg-6">
+            <div class="card" style="border: 2px solid var(--bbq-gold); height: 100%;">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--bbq-charcoal) 0%, var(--bbq-smoke) 100%); color: white;">
+                    <h5 class="mb-0"><i class="bi bi-lightning-fill"></i> Quick Start</h5>
+                </div>
+                <div class="card-body">
+                    <ol>
+                        <li><strong>Go to Admin Panel</strong> → <a href="/admin/core/ordertracking/" target="_blank">Order Tracking</a></li>
+                        <li><strong>Select an order</strong> to update</li>
+                        <li><strong>Update Status</strong> - Choose from 7 stages</li>
+                        <li><strong>Add GPS Coordinates</strong> - Latitude & Longitude</li>
+                        <li><strong>Set Location Name</strong> - Describe current location</li>
+                        <li><strong>Set Delivery Time</strong> - Estimated arrival</li>
+                        <li><strong>Save</strong> - Changes appear on customer tracking page</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card" style="border: 2px solid var(--bbq-gold); height: 100%;">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--bbq-charcoal) 0%, var(--bbq-smoke) 100%); color: white;">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Order Status Stages</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2"><span class="badge" style="background-color: gray;">Order Placed</span> - Initial order created</div>
+                    <div class="mb-2"><span class="badge" style="background-color: blue;">Confirmed</span> - Order confirmed by staff</div>
+                    <div class="mb-2"><span class="badge" style="background-color: orange;">Preparing</span> - Currently being prepared</div>
+                    <div class="mb-2"><span class="badge" style="background-color: purple;">Ready for Pickup</span> - Ready to go</div>
+                    <div class="mb-2"><span class="badge" style="background-color: cyan;">Out for Delivery</span> - On the way</div>
+                    <div class="mb-2"><span class="badge" style="background-color: green;">Delivered</span> - Successfully delivered</div>
+                    <div class="mb-2"><span class="badge" style="background-color: red;">Cancelled</span> - Order cancelled</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GPS Coordinates Guide -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card" style="border: 2px solid var(--bbq-gold);">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--bbq-charcoal) 0%, var(--bbq-smoke) 100%); color: white;">
+                    <h5 class="mb-0"><i class="bi bi-map"></i> GPS Coordinates Guide</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 style="color: var(--bbq-gold);">How to Get GPS Coordinates:</h6>
+                            <ol>
+                                <li>Open <a href="https://maps.google.com" target="_blank">Google Maps</a></li>
+                                <li>Search for the location</li>
+                                <li>Right-click on the location</li>
+                                <li>Click the coordinates at the top</li>
+                                <li>Copy the latitude and longitude</li>
+                            </ol>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 style="color: var(--bbq-gold);">Example Coordinates:</h6>
+                            <div class="alert alert-info" style="border-left: 4px solid var(--bbq-gold);">
+                                <strong>Manila, Philippines:</strong><br>
+                                Latitude: 14.5994<br>
+                                Longitude: 120.9842
+                            </div>
+                            <div class="alert alert-info" style="border-left: 4px solid var(--bbq-gold);">
+                                <strong>Cebu, Philippines:</strong><br>
+                                Latitude: 10.3157<br>
+                                Longitude: 123.8854
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Actions -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card" style="border: 2px solid var(--bbq-gold);">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--bbq-charcoal) 0%, var(--bbq-smoke) 100%); color: white;">
+                    <h5 class="mb-0"><i class="bi bi-lightning"></i> Bulk Actions</h5>
+                </div>
+                <div class="card-body">
+                    <p>In the Order Tracking admin list, you can:</p>
+                    <ul>
+                        <li><strong>Select multiple orders</strong> using checkboxes</li>
+                        <li><strong>Use bulk actions</strong> to update status for multiple orders at once:
+                            <ul>
+                                <li>✓ Mark as Confirmed</li>
+                                <li>✓ Mark as Preparing</li>
+                                <li>✓ Mark as Ready for Pickup</li>
+                                <li>✓ Mark as Out for Delivery</li>
+                                <li>✓ Mark as Delivered</li>
+                            </ul>
+                        </li>
+                        <li><strong>Edit status directly</strong> in the list view (click on status badge)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Location Names Examples -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card" style="border: 2px solid var(--bbq-gold);">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--bbq-charcoal) 0%, var(--bbq-smoke) 100%); color: white;">
+                    <h5 class="mb-0"><i class="bi bi-pin-map"></i> Location Name Examples</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 style="color: var(--bbq-gold);">Preparing Stage:</h6>
+                            <ul>
+                                <li>Preparing at Kitchen</li>
+                                <li>Grilling in Progress</li>
+                                <li>Packaging Order</li>
+                                <li>Quality Check</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 style="color: var(--bbq-gold);">Delivery Stage:</h6>
+                            <ul>
+                                <li>Out for Delivery - Driver: John</li>
+                                <li>En Route to Customer</li>
+                                <li>Near Customer Location</li>
+                                <li>Arriving in 5 minutes</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estimated Delivery Time -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card" style="border: 2px solid var(--bbq-gold);">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--bbq-charcoal) 0%, var(--bbq-smoke) 100%); color: white;">
+                    <h5 class="mb-0"><i class="bi bi-calendar-event"></i> Setting Estimated Delivery Time</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Why set estimated delivery time?</strong></p>
+                    <ul>
+                        <li>Customers know when to expect their order</li>
+                        <li>Reduces customer inquiries</li>
+                        <li>Improves customer satisfaction</li>
+                        <li>Helps with delivery planning</li>
+                    </ul>
+                    <hr>
+                    <p><strong>How to set it:</strong></p>
+                    <ol>
+                        <li>Click on the order to edit</li>
+                        <li>Scroll to "Estimated Delivery Time" field</li>
+                        <li>Click the date/time picker</li>
+                        <li>Select the expected delivery date and time</li>
+                        <li>Save changes</li>
+                    </ol>
+                    <div class="alert alert-warning" style="border-left: 4px solid var(--bbq-gold);">
+                        <strong>Tip:</strong> Set realistic delivery times. Add buffer time for unexpected delays.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer View -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card" style="border: 2px solid var(--bbq-gold);">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--bbq-charcoal) 0%, var(--bbq-smoke) 100%); color: white;">
+                    <h5 class="mb-0"><i class="bi bi-eye"></i> What Customers See</h5>
+                </div>
+                <div class="card-body">
+                    <p>When you update tracking information, customers see:</p>
+                    <ul>
+                        <li><strong>Order Status Timeline</strong> - Visual progress through all stages</li>
+                        <li><strong>Current Status Badge</strong> - Color-coded status indicator</li>
+                        <li><strong>Location Name</strong> - Where their order currently is</li>
+                        <li><strong>Live Map</strong> - GPS location displayed on interactive map (when coordinates are set)</li>
+                        <li><strong>Estimated Delivery</strong> - When they can expect delivery</li>
+                        <li><strong>Order Items</strong> - What they ordered</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row">
+        <div class="col-12 text-center">
+            <a href="/admin/core/ordertracking/" class="btn btn-lg" style="background: var(--bbq-gold); color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: bold;">
+                <i class="bi bi-arrow-right"></i> Go to Order Tracking Admin
+            </a>
+            <a href="{% url 'order_list' %}" class="btn btn-lg" style="background: var(--bbq-charcoal); color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: bold; margin-left: 10px;">
+                <i class="bi bi-arrow-left"></i> Back to Orders
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .badge {
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    ol, ul {
+        margin-bottom: 0;
+    }
+
+    li {
+        margin-bottom: 8px;
+    }
+</style>
+{% endblock %}

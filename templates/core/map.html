@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Naval, Biliran Map - BBQ Grill{% endblock %}
+
+{% block content %}
+<style>
+    #map {
+        height: 600px;
+        width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .map-container {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .map-header {
+        margin-bottom: 1.5rem;
+    }
+    
+    .map-header h1 {
+        color: var(--bbq-gold, #D4AF37);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .map-header p {
+        color: #666;
+        font-size: 1rem;
+    }
+    
+    .leaflet-container {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+</style>
+
+<div class="map-container">
+    <div class="map-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1><i class="bi bi-geo-alt-fill"></i> Naval, Biliran, Philippines</h1>
+                <p>Explore our service area and location</p>
+            </div>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <div id="map"></div>
+</div>
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+
+<!-- Leaflet JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+<script>
+    // Naval, Biliran coordinates
+    const navalCoords = [11.5667, 124.5667];
+    
+    // Initialize map with higher zoom level
+    const map = L.map('map').setView(navalCoords, 16);
+    
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+    }).addTo(map);
+    
+    // Add marker for Naval, Biliran
+    const marker = L.marker(navalCoords).addTo(map);
+    marker.bindPopup('<b>Naval, Biliran</b><br>Philippines').openPopup();
+    
+    // Add a circle to show service area (5km radius)
+    L.circle(navalCoords, {
+        color: '#D4AF37',
+        fillColor: '#D4AF37',
+        fillOpacity: 0.1,
+        radius: 5000,
+        weight: 2,
+        dashArray: '5, 5'
+    }).addTo(map);
+</script>
+{% endblock %}

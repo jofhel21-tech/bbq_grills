@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Admin - Payment Transactions - BBQ Grill{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-credit-card"></i> Payment Transactions</h2>
+            <div class="d-flex gap-2">
+                <a href="{% url 'admin_order_list' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Orders
+                </a>
+            </div>
+        </div>
+
+        <!-- Search and Filter Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <label for="search" class="form-label">Search Payments</label>
+                        <input type="text" class="form-control" id="search" name="search" 
+                               value="{{ search_query }}" placeholder="Customer, Order ID, Transaction ID...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="status" class="form-label">Filter by Status</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="">All Statuses</option>
+                            {% for value, label in status_choices %}
+                                <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="method" class="form-label">Filter by Method</label>
+                        <select class="form-select" id="method" name="method">
+                            <option value="">All Methods</option>
+                            {% for value, label in method_choices %}
+                                <option value="{{ value }}" {% if current_method == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                        <a href="{% url 'admin_payment_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Clear
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Payments Table -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-ul"></i> Payment Transactions 
+                    <span class="badge bg-primary">{{ payments.count }}</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if payments %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Payment #</th>
+                                    <th>Order #</th>
+                                    <th>Customer</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in payments %}
+                                <tr>
+                                    <td>
+                                        <strong>#{{ payment.id }}</strong>
+                                        {% if payment.transaction_id %}
+                                            <br><small class="text-muted">{{ payment.transaction_id }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'admin_order_update' payment.order.id %}" class="text-decoration-none">
+                                            #{{ payment.order.id }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <strong>{{ payment.customer.username }}</strong>
+                                            {% if payment.customer.first_name %}
+                                                <br><small class="text-muted">{{ payment.customer.first_name }} {{ payment.customer.last_name }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong>₱{{ payment.amount }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ payment.get_payment_method_display }}</span>
+                                    </td>
+                                    <td>
+                                        {% if payment.status == 'pending' %}
+                                            <span class="badge bg-warning">{{ payment.get_status_display }}</span>
+                                        {% elif payment.status == 'processing' %}
+                                            <span class="badge bg-info">{{ payment.get_status_display }}</span>
+                                        {% elif payment.status == 'completed' %}
+                                            <span class="badge bg-success">{{ payment.get_status_display }}</span>
+                                        {% elif payment.status == 'failed' %}
+                                            <span class="badge bg-danger">{{ payment.get_status_display }}</span>
+                                        {% elif payment.status == 'refunded' %}
+                                            <span class="badge bg-dark">{{ payment.get_status_display }}</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ payment.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small>{{ payment.created_at|date:"M d, Y H:i" }}</small>
+                                        {% if payment.payment_date %}
+                                            <br><small class="text-success">Paid: {{ payment.payment_date|date:"M d, H:i" }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'admin_payment_update' payment.pk %}" 
+                                               class="btn btn-sm btn-outline-primary" title="Edit Payment">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-credit-card-2-front display-1 text-muted"></i>
+                        <h4 class="text-muted mt-3">No Payment Transactions Found</h4>
+                        <p class="text-muted">
+                            {% if search_query or current_status or current_method %}
+                                Try adjusting your search criteria.
+                            {% else %}
+                                No payment transactions have been recorded yet.
+                            {% endif %}
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <h5>Pending</h5>
+                        <h3>{{ payments|length }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5>Completed</h5>
+                        <h3>{{ payments|length }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h5>Failed</h5>
+                        <h3>{{ payments|length }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <h5>Refunded</h5>
+                        <h3>{{ payments|length }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

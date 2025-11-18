@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}My Invoices - BBQ Grill{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1><i class="bi bi-receipt"></i> My Invoices</h1>
+        <p class="lead">View and manage your invoices</p>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'order_list' %}" class="btn btn-primary btn-sm">
+            <i class="bi bi-bag-check"></i> View Orders
+        </a>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        {% if invoices %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Invoice #</th>
+                            <th>Order #</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Issued Date</th>
+                            <th>Due Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for invoice in invoices %}
+                            <tr>
+                                <td><strong>{{ invoice.invoice_number }}</strong></td>
+                                <td>#{{ invoice.order.id }}</td>
+                                <td><strong>₱{{ invoice.total_amount|floatformat:2 }}</strong></td>
+                                <td>
+                                    <span class="badge bg-{% if invoice.status == 'paid' %}success{% elif invoice.status == 'issued' %}info{% elif invoice.status == 'draft' %}warning{% else %}danger{% endif %}">
+                                        {{ invoice.get_status_display }}
+                                    </span>
+                                    {% if invoice.is_overdue %}
+                                        <br><small class="text-danger"><i class="bi bi-exclamation-triangle"></i> Overdue</small>
+                                    {% endif %}
+                                </td>
+                                <td>{{ invoice.issued_date|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if invoice.due_date %}
+                                        {{ invoice.due_date|date:"M d, Y" }}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'invoice_detail' invoice.pk %}" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center">
+                <i class="bi bi-inbox"></i>
+                <h4>No Invoices Yet</h4>
+                <p>
+                    You haven't generated any invoices yet. 
+                    <a href="{% url 'order_list' %}" class="alert-link">View your orders</a> to generate invoices.
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

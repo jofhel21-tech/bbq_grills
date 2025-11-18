@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Feedback - BBQ Grill{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1><i class="bi bi-chat-dots"></i> Community Feedback</h1>
+        <p class="lead">Share your thoughts and see what others are saying</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Feedback Form -->
+    {% if user.is_authenticated and form %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-pencil"></i> Share Your Feedback</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send"></i> Submit Feedback
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% elif not user.is_authenticated %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-info-circle"></i> Join the Conversation</h5>
+                </div>
+                <div class="card-body">
+                    <p>Login to share your feedback and join our community discussions.</p>
+                    <a href="/accounts/login/" class="btn btn-primary">
+                        <i class="bi bi-box-arrow-in-right"></i> Login
+                    </a>
+                    <a href="{% url 'register' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-person-plus"></i> Register
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Feedback List -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-chat-square-dots"></i> Recent Feedback</h5>
+            </div>
+            <div class="card-body">
+                {% if feedback_list %}
+                    {% for feedback in feedback_list %}
+                        <div class="mb-3 p-3 bg-light rounded">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">{{ feedback.user.username }}</h6>
+                                    <p class="mb-1">{{ feedback.message }}</p>
+                                    <small class="text-muted">
+                                        <i class="bi bi-clock"></i> {{ feedback.created_at|date:"M d, Y g:i A" }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center text-muted">
+                        <i class="bi bi-chat-square" style="font-size: 3rem;"></i>
+                        <h5>No Feedback Yet</h5>
+                        <p>Be the first to share your thoughts!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
