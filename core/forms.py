@@ -376,3 +376,4 @@ class ProductStockForm(forms.ModelForm):
             'stock_quantity': 'Stock Quantity',
             'is_active': 'Available for Sale'
         }
+
