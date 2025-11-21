@@ -81,6 +81,9 @@ urlpatterns = [
     # Map
     path("map/", views.map_view, name="map"),
     
+    # Tutorial
+    path("tutorial/", views.tutorial_view, name="tutorial"),
+    
     # Admin Invoices
     path("management/invoices/", views.admin_invoice_list, name="admin_invoice_list"),
     path("management/invoices/<int:pk>/", views.admin_invoice_detail, name="admin_invoice_detail"),

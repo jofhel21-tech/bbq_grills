@@ -76,21 +76,15 @@ body {
 }
 
 @media (max-width: 991px) {
-    .navbar .container {
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    .navbar-brand {
+        font-size: 1.7rem;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
     }
     
     .navbar-toggler {
-        position: absolute;
-        left: 0;
-    }
-    
-    .navbar-brand {
-        font-size: 1.7rem;
-        margin: 0;
+        order: -1;
     }
 }
 
@@ -750,7 +744,7 @@ footer .input-group .btn:hover {
 
 /* Hero background image */
 .hero-bg {
-    background-image: url('../image/fire.jpg');
+    background-image: url("../image/fire.85e45a07cdf4.jpg");
 }
 
 /* Custom scrollbar */

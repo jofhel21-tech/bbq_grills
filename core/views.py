@@ -838,6 +838,11 @@ def map_view(request: HttpRequest) -> HttpResponse:
     return render(request, 'core/map.html')
 
 
+def tutorial_view(request: HttpRequest) -> HttpResponse:
+    """Display user tutorial guide."""
+    return render(request, 'core/tutorial.html')
+
+
 # Payment Management Views
 @user_passes_test(lambda u: u.is_staff)
 def admin_payment_list(request: HttpRequest) -> HttpResponse:

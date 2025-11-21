@@ -1,0 +1,613 @@
+{% extends 'base.html' %}
+
+{% block title %}User Tutorial - BBQ Grill{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar Navigation -->
+        <div class="col-md-3 col-lg-2 bg-light sidebar-nav sticky-top" style="height: 100vh; overflow-y: auto;">
+            <div class="p-3">
+                <h5 class="text-primary mb-3">
+                    <i class="bi bi-book"></i> Tutorial Guide
+                </h5>
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="#getting-started">Getting Started</a>
+                    <a class="nav-link" href="#registration-login">Registration & Login</a>
+                    <a class="nav-link" href="#browsing-products">Browsing Products</a>
+                    <a class="nav-link" href="#shopping-cart">Shopping Cart & Checkout</a>
+                    <a class="nav-link" href="#managing-orders">Managing Orders</a>
+                    <a class="nav-link" href="#making-reservations">Making Reservations</a>
+                    <a class="nav-link" href="#tracking-order">Tracking Your Order</a>
+                    <a class="nav-link" href="#user-profile">User Profile & History</a>
+                    <a class="nav-link" href="#additional-features">Additional Features</a>
+                    <a class="nav-link" href="#troubleshooting">Troubleshooting</a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <div class="p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="display-4 text-primary">
+                        <i class="bi bi-book-half"></i> BBQ Grill Website Tutorial
+                    </h1>
+                    <div>
+                        <a href="{% url 'home' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-house"></i> Back to Home
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Getting Started -->
+                <section id="getting-started" class="mb-5">
+                    <h2 class="text-success mb-3">
+                        <i class="bi bi-play-circle"></i> Getting Started
+                    </h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Accessing the Website</h5>
+                            <ol>
+                                <li>Open your web browser</li>
+                                <li>Navigate to: <code>http://127.0.0.1:8000</code> or <code>http://localhost:8000</code></li>
+                                <li>You'll be directed to the login page</li>
+                            </ol>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Registration & Login -->
+                <section id="registration-login" class="mb-5">
+                    <h2 class="text-success mb-3">
+                        <i class="bi bi-person-plus"></i> Registration & Login
+                    </h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Creating a New Account</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ol>
+                                        <li>On the login page, click <strong>"Register"</strong></li>
+                                        <li>Fill in the registration form:
+                                            <ul>
+                                                <li>Username (required)</li>
+                                                <li>Email address (required)</li>
+                                                <li>Password (required)</li>
+                                                <li>Confirm password (required)</li>
+                                            </ul>
+                                        </li>
+                                        <li>Click <strong>"Register"</strong> button</li>
+                                        <li>You'll be automatically logged in</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0">Logging In</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ol>
+                                        <li>Enter your <strong>username</strong> and <strong>password</strong></li>
+                                        <li>Click <strong>"Login"</strong> button</li>
+                                        <li>You'll be redirected to your dashboard</li>
+                                    </ol>
+                                    <hr>
+                                    <h6>Logging Out</h6>
+                                    <ol>
+                                        <li>Click your username in the navigation bar</li>
+                                        <li>Select <strong>"Logout"</strong></li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Browsing Products -->
+                <section id="browsing-products" class="mb-5">
+                    <h2 class="text-success mb-3">
+                        <i class="bi bi-shop"></i> Browsing Products
+                    </h2>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0">Viewing Products</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ol>
+                                        <li>Click <strong>"Products"</strong> in navigation</li>
+                                        <li>Browse available BBQ items</li>
+                                        <li>View images and prices</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-warning text-dark">
+                                    <h5 class="mb-0">Searching Products</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ol>
+                                        <li>Use the search bar at the top</li>
+                                        <li>Type product name (e.g., "BBQ Chicken")</li>
+                                        <li>Press <strong>Enter</strong> or click search icon</li>
+                                        <li>View filtered results</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-secondary text-white">
+                                    <h5 class="mb-0">Filtering Products</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ol>
+                                        <li>Set <strong>Min/Max Price</strong></li>
+                                        <li>Choose <strong>Sort By</strong> option</li>
+                                        <li>Click <strong>"Apply Filters"</strong></li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Shopping Cart & Checkout -->
+                <section id="shopping-cart" class="mb-5">
+                    <h2 class="text-success mb-3">
+                        <i class="bi bi-cart"></i> Shopping Cart & Checkout
+                    </h2>
+                    <div class="accordion" id="cartAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#addToCart">
+                                    Adding Items to Cart
+                                </button>
+                            </h2>
+                            <div id="addToCart" class="accordion-collapse collapse show" data-bs-parent="#cartAccordion">
+                                <div class="accordion-body">
+                                    <ol>
+                                        <li>Browse products</li>
+                                        <li>Find a product you want</li>
+                                        <li>Click <strong>"Add to Cart"</strong> button</li>
+                                        <li>Success message will appear</li>
+                                        <li>Cart icon updates with item count</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#viewCart">
+                                    Viewing Your Cart
+                                </button>
+                            </h2>
+                            <div id="viewCart" class="accordion-collapse collapse" data-bs-parent="#cartAccordion">
+                                <div class="accordion-body">
+                                    <ol>
+                                        <li>Click <strong>"Cart"</strong> in navigation</li>
+                                        <li>Review items in your cart</li>
+                                        <li>Check quantities and prices</li>
+                                        <li>View total amount</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#checkout">
+                                    Checkout Process
+                                </button>
+                            </h2>
+                            <div id="checkout" class="accordion-collapse collapse" data-bs-parent="#cartAccordion">
+                                <div class="accordion-body">
+                                    <ol>
+                                        <li>Click <strong>"Proceed to Checkout"</strong></li>
+                                        <li>Fill in delivery information</li>
+                                        <li>Select payment method:
+                                            <ul>
+                                                <li>Cash on Delivery (COD)</li>
+                                                <li>GCash</li>
+                                                <li>Bank Transfer</li>
+                                                <li>Credit/Debit Card</li>
+                                            </ul>
+                                        </li>
+                                        <li>Add order notes (optional)</li>
+                                        <li>Click <strong>"Place Order"</strong></li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Managing Orders -->
+                <section id="managing-orders" class="mb-5">
+                    <h2 class="text-success mb-3">
+                        <i class="bi bi-clipboard-check"></i> Managing Orders
+                    </h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Viewing Your Orders</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ol>
+                                        <li>Click <strong>"Orders"</strong> in navigation</li>
+                                        <li>See list of all your orders with:
+                                            <ul>
+                                                <li>Order number</li>
+                                                <li>Date placed</li>
+                                                <li>Status</li>
+                                                <li>Total amount</li>
+                                            </ul>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-warning text-dark">
+                                    <h5 class="mb-0">Editing/Cancelling Orders</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ol>
+                                        <li>Find the order to modify</li>
+                                        <li>Click <strong>"Edit"</strong> or <strong>"Cancel"</strong></li>
+                                        <li>Make changes if allowed</li>
+                                        <li>Save changes</li>
+                                    </ol>
+                                    <div class="alert alert-info mt-2">
+                                        <small><strong>Note:</strong> Orders cannot be edited once out for delivery or completed.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Making Reservations -->
+                <section id="making-reservations" class="mb-5">
+                    <h2 class="text-success mb-3">
+                        <i class="bi bi-calendar-check"></i> Making Reservations
+                    </h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Creating a Reservation</h5>
+                            <ol>
+                                <li>Click <strong>"Reservations"</strong> in navigation</li>
+                                <li>Click <strong>"Create New Reservation"</strong></li>
+                                <li>Fill in reservation details:
+                                    <ul>
+                                        <li>Date</li>
+                                        <li>Time</li>
+                                        <li>Number of guests</li>
+                                        <li>Special requests (optional)</li>
+                                    </ul>
+                                </li>
+                                <li>Click <strong>"Submit Reservation"</strong></li>
+                            </ol>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tracking Order -->
+                <section id="tracking-order" class="mb-5">
+                    <h2 class="text-success mb-3">
+                        <i class="bi bi-geo-alt"></i> Tracking Your Order
+                    </h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0">Order Status</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li><span class="badge bg-secondary">Order Placed</span> - Order received</li>
+                                        <li><span class="badge bg-primary">Confirmed</span> - Being prepared</li>
+                                        <li><span class="badge bg-warning">Out for Delivery</span> - On the way</li>
+                                        <li><span class="badge bg-success">Delivered</span> - Order delivered</li>
+                                        <li><span class="badge bg-danger">Cancelled</span> - Order cancelled</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0">How to Track</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ol>
+                                        <li>Go to <strong>"Orders"</strong> page</li>
+                                        <li>Find your order</li>
+                                        <li>Click <strong>"Track Order"</strong></li>
+                                        <li>View delivery status and location</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- User Profile -->
+                <section id="user-profile" class="mb-5">
+                    <h2 class="text-success mb-3">
+                        <i class="bi bi-person-circle"></i> User Profile & History
+                    </h2>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Profile Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ol>
+                                        <li>Click your username in navigation</li>
+                                        <li>Select <strong>"Profile"</strong></li>
+                                        <li>View account information</li>
+                                        <li>See order statistics</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0">Activity History</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ol>
+                                        <li>Click <strong>"History"</strong> in navigation</li>
+                                        <li>View all your activities</li>
+                                        <li>Delete specific entries</li>
+                                        <li>Clear all history if needed</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-secondary text-white">
+                                    <h5 class="mb-0">Additional Accounts</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ol>
+                                        <li>Go to <strong>Profile</strong> page</li>
+                                        <li>Click <strong>"Create Additional Account"</strong></li>
+                                        <li>Fill in new account details</li>
+                                        <li>Submit to create</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Additional Features -->
+                <section id="additional-features" class="mb-5">
+                    <h2 class="text-success mb-3">
+                        <i class="bi bi-star"></i> Additional Features
+                    </h2>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-success text-white text-center">
+                                    <i class="bi bi-journal-text fs-2"></i>
+                                    <h6 class="mt-2 mb-0">Journal</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p>Create personal notes and reviews about your BBQ experience.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-info text-white text-center">
+                                    <i class="bi bi-newspaper fs-2"></i>
+                                    <h6 class="mt-2 mb-0">Articles</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p>Read BBQ tips, recipes, and news articles published by our team.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-warning text-dark text-center">
+                                    <i class="bi bi-chat-dots fs-2"></i>
+                                    <h6 class="mt-2 mb-0">Feedback</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p>Share your experience and read feedback from other customers.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-danger text-white text-center">
+                                    <i class="bi bi-geo-alt fs-2"></i>
+                                    <h6 class="mt-2 mb-0">Map</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p>View our location in Naval, Biliran and get directions to our store.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Troubleshooting -->
+                <section id="troubleshooting" class="mb-5">
+                    <h2 class="text-success mb-3">
+                        <i class="bi bi-tools"></i> Troubleshooting
+                    </h2>
+                    <div class="accordion" id="troubleshootingAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#loginIssues">
+                                    Can't Login?
+                                </button>
+                            </h2>
+                            <div id="loginIssues" class="accordion-collapse collapse show" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li>Check username and password spelling</li>
+                                        <li>Use "Forgot Password" if needed</li>
+                                        <li>Ensure account is registered</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cartIssues">
+                                    Cart Not Updating?
+                                </button>
+                            </h2>
+                            <div id="cartIssues" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li>Refresh the page</li>
+                                        <li>Clear browser cache</li>
+                                        <li>Try logging out and back in</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#orderIssues">
+                                    Order Not Showing?
+                                </button>
+                            </h2>
+                            <div id="orderIssues" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li>Check "Orders" page</li>
+                                        <li>Ensure you're logged in with correct account</li>
+                                        <li>Wait a moment for order to process</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Contact Support -->
+                <div class="alert alert-primary" role="alert">
+                    <h4 class="alert-heading">
+                        <i class="bi bi-headset"></i> Need More Help?
+                    </h4>
+                    <p>For additional support:</p>
+                    <ul class="mb-0">
+                        <li>Visit our physical store in Naval, Biliran</li>
+                        <li>Check the <a href="{% url 'map' %}" class="alert-link">Map page</a> for location</li>
+                        <li>Submit feedback through the <a href="{% url 'feedback' %}" class="alert-link">Feedback page</a></li>
+                    </ul>
+                </div>
+
+                <div class="text-center mt-5">
+                    <h3 class="text-primary">🍖 Enjoy your BBQ Grill experience! 🔥</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.sidebar-nav {
+    border-right: 1px solid #dee2e6;
+}
+
+.sidebar-nav .nav-link {
+    color: #495057;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.sidebar-nav .nav-link:hover {
+    background-color: #e9ecef;
+    color: #0d6efd;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.badge {
+    font-size: 0.75em;
+}
+
+section {
+    scroll-margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+    .sidebar-nav {
+        position: relative !important;
+        height: auto !important;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Smooth scrolling for sidebar links
+    document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Highlight active section in sidebar
+    const observerOptions = {
+        root: null,
+        rootMargin: '-20% 0px -70% 0px',
+        threshold: 0
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            const id = entry.target.getAttribute('id');
+            const navLink = document.querySelector(`.sidebar-nav .nav-link[href="#${id}"]`);
+            
+            if (entry.isIntersecting) {
+                document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+                    link.classList.remove('active', 'text-primary', 'fw-bold');
+                });
+                if (navLink) {
+                    navLink.classList.add('active', 'text-primary', 'fw-bold');
+                }
+            }
+        });
+    }, observerOptions);
+
+    // Observe all sections
+    document.querySelectorAll('section[id]').forEach(section => {
+        observer.observe(section);
+    });
+});
+</script>
+{% endblock %}

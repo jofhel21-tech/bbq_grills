@@ -48,14 +48,50 @@ body {
     transition: all 0.3s ease;
     position: relative;
     z-index: 1050;
+    padding: 0.5rem 1rem;
+}
+
+.navbar-toggler {
+    border: 2px solid rgba(210, 105, 30, 0.5);
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    position: relative;
+    z-index: 1060;
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 0.2rem rgba(210, 105, 30, 0.25);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 165, 0, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
 .navbar-brand {
     font-weight: 700;
-    font-size: 1.6rem;
+    font-size: 2rem;
     color: var(--bbq-gold) !important;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
+}
+
+@media (max-width: 991px) {
+    .navbar .container {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .navbar-toggler {
+        position: absolute;
+        left: 0;
+    }
+    
+    .navbar-brand {
+        font-size: 1.7rem;
+        margin: 0;
+    }
 }
 
 .navbar-brand:hover {
@@ -65,12 +101,19 @@ body {
 }
 
 .navbar-logo {
-    height: 45px;
+    height: 55px;
     width: auto;
-    max-width: 55px;
+    max-width: 65px;
     object-fit: contain;
     filter: drop-shadow(0 2px 8px rgba(210, 105, 30, 0.3));
     transition: all 0.3s ease;
+}
+
+@media (max-width: 991px) {
+    .navbar-logo {
+        height: 50px;
+        max-width: 60px;
+    }
 }
 
 .navbar-logo:hover {
@@ -83,7 +126,9 @@ body {
     font-weight: 500;
     position: relative;
     transition: all 0.3s ease;
-    margin: 0 8px;
+    margin: 0 4px;
+    padding: 0.5rem 0.6rem !important;
+    font-size: 0.9rem;
 }
 
 .nav-link::before {
@@ -493,6 +538,41 @@ footer .text-light {
     color: var(--bbq-ash) !important;
 }
 
+footer .social-links a {
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+footer .social-links a:hover {
+    color: var(--bbq-gold) !important;
+    transform: translateY(-3px);
+    text-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
+}
+
+footer ul li a {
+    transition: all 0.3s ease;
+}
+
+footer ul li a:hover {
+    color: var(--bbq-gold) !important;
+    padding-left: 5px;
+}
+
+footer .input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+footer .input-group input:focus {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: var(--bbq-gold) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 165, 0, 0.25);
+}
+
+footer .input-group .btn:hover {
+    background: var(--bbq-flame) !important;
+    transform: scale(1.05);
+}
+
 /* Form Styles */
 .form-control {
     border: 2px solid rgba(210, 105, 30, 0.2);
@@ -589,6 +669,15 @@ footer .text-light {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+    .navbar {
+        padding: 0.5rem 1rem;
+    }
+    
+    .navbar .container {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
     .navbar-brand {
         font-size: 1.25rem;
     }
@@ -616,6 +705,19 @@ footer .text-light {
 }
 
 @media (max-width: 576px) {
+    .navbar {
+        padding: 0.5rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1.5rem;
+    }
+    
+    .navbar-logo {
+        height: 45px;
+        max-width: 55px;
+    }
+    
     .bg-primary {
         border-radius: 0 0 30px 30px;
         margin-bottom: 20px;
@@ -783,10 +885,11 @@ footer .text-light {
     background: rgba(255, 255, 255, 0.9);
     border: 2px solid rgba(210, 105, 30, 0.3);
     border-radius: 25px;
-    padding: 8px 16px;
-    font-size: 0.9rem;
+    padding: 6px 12px;
+    font-size: 0.85rem;
     transition: all 0.3s ease;
-    min-width: 200px;
+    min-width: 150px;
+    max-width: 180px;
 }
 
 .navbar .form-control:focus {
@@ -806,7 +909,7 @@ footer .text-light {
     background: rgba(210, 105, 30, 0.1);
     color: var(--bbq-gold);
     border-radius: 0 25px 25px 0;
-    padding: 8px 16px;
+    padding: 6px 12px;
     transition: all 0.3s ease;
 }
 

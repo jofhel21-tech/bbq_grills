@@ -16,7 +16,7 @@
                         <i class="bi bi-shop"></i> Browse Products
                     </a>
                 </div>
-                <div class="col-md-4 text-center">
+                <div class="col-md-4 text-center mt-4 mt-md-0">
                     <i class="bi bi-fire display-1"></i>
                 </div>
             </div>
@@ -138,6 +138,24 @@
     </div>
 </div>
 
+<!-- Help Section -->
+{% if user.is_authenticated %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-info d-flex align-items-center" role="alert">
+            <i class="bi bi-lightbulb me-3 fs-4"></i>
+            <div class="flex-grow-1">
+                <h5 class="alert-heading mb-1">New to our website?</h5>
+                <p class="mb-2">Check out our comprehensive tutorial to learn how to use all features!</p>
+            </div>
+            <a href="{% url 'tutorial' %}" class="btn btn-info">
+                <i class="bi bi-book"></i> View Tutorial
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <!-- Call to Action -->
 <div class="row">
     <div class="col-12">
@@ -148,8 +166,11 @@
                 <a href="{% url 'register' %}" class="btn btn-primary me-2">
                     <i class="bi bi-person-plus"></i> Sign Up
                 </a>
-                <a href="/accounts/login/" class="btn btn-outline-primary">
+                <a href="/accounts/login/" class="btn btn-outline-primary me-2">
                     <i class="bi bi-box-arrow-in-right"></i> Login
+                </a>
+                <a href="{% url 'tutorial' %}" class="btn btn-outline-info">
+                    <i class="bi bi-book"></i> Tutorial
                 </a>
             {% else %}
                 <a href="{% url 'reservation_create' %}" class="btn btn-primary">

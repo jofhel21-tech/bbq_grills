@@ -16,14 +16,14 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
             <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
                 <img src="{% static 'image/logo bbq grill.png' %}" alt="BBQ Grill Logo" class="navbar-logo me-2">
                 BBQ Grill
             </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
             
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
@@ -42,10 +42,13 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'map' %}"><i class="bi bi-geo-alt"></i> Map</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'tutorial' %}"><i class="bi bi-book"></i> Tutorial</a>
+                    </li>
                 </ul>
                 
                 <!-- Search Form with Live Suggestions -->
-                <div class="search-container me-3" style="position: relative;">
+                <div class="search-container me-2" style="position: relative;">
                     <form class="d-flex" method="get" action="{% url 'product_list' %}" role="search">
                         <div class="input-group">
                             <input 
@@ -53,10 +56,11 @@
                                 type="search" 
                                 name="search" 
                                 id="navbar-search"
-                                placeholder="Search products..." 
+                                placeholder="Search..." 
                                 aria-label="Search" 
                                 value="{{ request.GET.search }}"
-                                autocomplete="off">
+                                autocomplete="off"
+                                style="min-width: 150px;">
                             <button class="btn btn-outline-light" type="submit">
                                 <i class="bi bi-search"></i>
                             </button>
@@ -87,6 +91,7 @@
                                 <li><a class="dropdown-item" href="{% url 'create_additional_account' %}"><i class="bi bi-person-plus"></i> Create Account</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{% url 'user_history' %}"><i class="bi bi-clock-history"></i> Activity History</a></li>
+                                <li><a class="dropdown-item" href="{% url 'tutorial' %}"><i class="bi bi-question-circle"></i> Help & Tutorial</a></li>
                                 {% if user.is_staff %}
                                     <li><hr class="dropdown-divider"></li>
                                     <li class="dropdown-header"><i class="bi bi-shield-check"></i> Admin Panel</li>
@@ -144,15 +149,58 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-dark text-light py-4 mt-5">
+    <footer class="bg-dark text-light py-5 mt-5">
         <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h2 class="fw-bold mb-3" style="color: var(--bbq-gold); text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">BBQ GRILL</h2>
-                    <p class="mb-0">Your ultimate BBQ experience awaits!</p>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{% static 'image/logo bbq grill.png' %}" alt="BBQ Grill Logo" style="height: 50px; width: auto; margin-right: 12px;">
+                        <h3 class="fw-bold mb-0" style="color: var(--bbq-gold); text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">BBQ GRILL</h3>
+                    </div>
+                    <p class="mb-3" style="color: var(--bbq-ash);">Your ultimate BBQ experience awaits! Serving the finest grilled delights in Naval, Biliran.</p>
+                    <div class="social-links">
+                        <a href="#" class="text-light me-3" style="font-size: 1.5rem;"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-light me-3" style="font-size: 1.5rem;"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-light me-3" style="font-size: 1.5rem;"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="text-light" style="font-size: 1.5rem;"><i class="bi bi-envelope"></i></a>
+                    </div>
                 </div>
-                <div class="col-md-6 text-end">
-                    <p class="mb-0">&copy; 2024 <span class="fw-bold" style="color: var(--bbq-gold);">BBQ GRILL</span>. All rights reserved.</p>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-3" style="color: var(--bbq-gold);">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'home' %}" class="text-light text-decoration-none"><i class="bi bi-chevron-right"></i> Home</a></li>
+                        <li class="mb-2"><a href="{% url 'product_list' %}" class="text-light text-decoration-none"><i class="bi bi-chevron-right"></i> Products</a></li>
+                        <li class="mb-2"><a href="{% url 'order_list' %}" class="text-light text-decoration-none"><i class="bi bi-chevron-right"></i> Orders</a></li>
+                        <li class="mb-2"><a href="{% url 'feedback' %}" class="text-light text-decoration-none"><i class="bi bi-chevron-right"></i> Feedback</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="fw-bold mb-3" style="color: var(--bbq-gold);">Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-geo-alt-fill" style="color: var(--bbq-ember);"></i> Naval, Biliran, Philippines</li>
+                        <li class="mb-2"><i class="bi bi-telephone-fill" style="color: var(--bbq-ember);"></i> +63 909 302 0780</li>
+                        <li class="mb-2"><i class="bi bi-envelope-fill" style="color: var(--bbq-ember);"></i> info@bbqgrill.com</li>
+                        <li class="mb-2"><i class="bi bi-clock-fill" style="color: var(--bbq-ember);"></i> Mon-Sun: 10AM - 10PM</li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="fw-bold mb-3" style="color: var(--bbq-gold);">Newsletter</h5>
+                    <p style="color: var(--bbq-ash);">Subscribe for special offers and updates!</p>
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control" placeholder="Your email" style="background: rgba(255,255,255,0.1); border: 1px solid var(--bbq-ember); color: white;">
+                        <button class="btn" style="background: var(--bbq-ember); color: white;" type="button"><i class="bi bi-send"></i></button>
+                    </div>
+                </div>
+            </div>
+            <hr style="border-color: var(--bbq-ember); margin: 2rem 0;">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0" style="color: var(--bbq-ash);">&copy; 2024 <span class="fw-bold" style="color: var(--bbq-gold);">BBQ GRILL</span>. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <a href="#" class="text-light text-decoration-none me-3">Privacy Policy</a>
+                    <a href="#" class="text-light text-decoration-none me-3">Terms of Service</a>
+                    <a href="{% url 'tutorial' %}" class="text-light text-decoration-none">Help</a>
                 </div>
             </div>
         </div>

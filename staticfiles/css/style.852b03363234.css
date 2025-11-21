@@ -77,20 +77,26 @@ body {
 
 @media (max-width: 991px) {
     .navbar .container {
-        position: relative;
         display: flex;
+        flex-wrap: wrap;
         justify-content: center;
         align-items: center;
+        position: relative;
     }
     
     .navbar-toggler {
-        position: absolute;
-        left: 0;
+        display: none;
     }
     
     .navbar-brand {
         font-size: 1.7rem;
         margin: 0;
+    }
+    
+    .navbar-collapse {
+        display: flex !important;
+        flex-basis: 100%;
+        margin-top: 1rem;
     }
 }
 
@@ -750,7 +756,7 @@ footer .input-group .btn:hover {
 
 /* Hero background image */
 .hero-bg {
-    background-image: url('../image/fire.jpg');
+    background-image: url("../image/fire.85e45a07cdf4.jpg");
 }
 
 /* Custom scrollbar */
